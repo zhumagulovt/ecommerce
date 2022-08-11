@@ -1,0 +1,18 @@
+{% extends 'products/base.html' %}
+{% block title %}Home{% endblock %}
+{% load static %}
+{% block content %}
+
+<ul class="list-group">
+
+    {% for product in product_list %}
+        <li class="list-group-item">
+            <p>Name: {{ product.name }}</p>
+            <p>Category: {{ product.category }}</p>
+            <p>Desc: {{ product.description }}</p>
+            <p>Price: {{ product.price }}</p>
+            <p>New: {{ product.is_new }}</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
