@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,10 +40,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'rest_framework',
     'drf_yasg',
+    'admin_numeric_filter',
+    "debug_toolbar",
     
     'users',
-    'products'
+    'products',
+    'order'
+]
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 MIDDLEWARE = [
@@ -53,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'moscow_shop.urls'
@@ -80,9 +92,25 @@ WSGI_APPLICATION = 'moscow_shop.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+        'NAME': 'd1kqet0abe2jil',
+
+        'USER': 'zaasuzhlbyangw',
+
+        'PASSWORD': '6b026ff3757b0fcc94dde64f799a22bbbf977e85e3486352f9782c83971916d5',
+
+        'HOST': 'ec2-54-204-56-171.compute-1.amazonaws.com',
+
+        'PORT': '5432',
+
     }
 }
 
@@ -124,7 +152,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR / 'static'
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static'
+# ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -141,6 +172,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
     'ROTATE_REFRESH_TOKENS': True,
 }
+
+GRAPPELLI_ADMIN_TITLE = "Админ панель"
 
 MEDIA_URL = '/media/'
 

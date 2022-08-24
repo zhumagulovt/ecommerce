@@ -23,22 +23,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['image']
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    """Serializer for product in list"""
-
-    image = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = Product
-        fields = "__all__"
-
-    def get_image(self, obj):
-        img = obj.images.all()[:1]
-        if img.exists():
-            return ProductImageSerializer(img[0]).data
-        # return {image: null}
-        return None
-
 
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for category"""
@@ -46,6 +30,25 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
+        
+class ProductSerializer(serializers.ModelSerializer):
+    """Serializer for product in list"""
+
+    image = serializers.SerializerMethodField(read_only=True)
+    category = CategorySerializer(read_only=True)
+
+    class Meta:
+        model = Product
+        fields = "__all__"
+
+    def get_image(self, obj):
+        # print(obj.images.all()[:1])
+        img = obj.images.all()
+        # print(img)
+        if img.exists():
+            return img[0].image.url
+        return None
 
 
 class CommentSerializer(serializers.ModelSerializer):

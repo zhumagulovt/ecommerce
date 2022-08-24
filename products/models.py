@@ -49,6 +49,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
+        ordering = ['-created_at']
 
 
 class ProductImage(models.Model):
@@ -99,3 +100,4 @@ class Article(models.Model):
     class Meta:
         verbose_name = "Новость"
         verbose_name_plural = "Новости"
+        ordering = ['-created_at']

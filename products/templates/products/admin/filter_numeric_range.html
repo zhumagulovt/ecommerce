@@ -1,0 +1,18 @@
+{% load i18n %}
+<div class="grp-module">
+    {% with choices.0 as choice %}
+    <form method="get">
+        {% for k, v in choice.request.GET.items %}
+        {% if not k == choice.parameter_name|add:'_from' and not k == choice.parameter_name|add:'_to' %}
+        <input type="hidden" name="{{ k }}" value="{{ v }}">
+        {% endif %}
+        {% endfor %}
+
+        <h3>По ценам</h3>
+
+            {{ choice.form }}
+
+        <button type="submit" class="grp-button" style="width:50px">ок</button>
+    </form>
+    {% endwith %}
+</div>

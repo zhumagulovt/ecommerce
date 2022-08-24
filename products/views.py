@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, ListAPIView, GenericAPIView
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework.mixins import UpdateModelMixin
+from rest_framework.decorators import api_view
 from rest_framework import status, mixins
 
 from .models import Article, Category, Comment, Product, Rating, Like
@@ -26,7 +27,7 @@ class LatestProductList(APIView):
     """Last added products"""
 
     def get(self, request):
-        products = Product.objects.order_by('-created_at')[:5]
+        products = Product.objects.all().prefetch_related('images')[:5]
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -36,7 +37,16 @@ class ProductDetail(RetrieveAPIView):
 
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
+# class ProductDetail(APIView):
 
+#     def get_object(self, pk):
+#         product = get_object_or_404(Product, pk=pk)
+#         return product
+
+#     def get(self, request, pk):
+#         product = self.get_object(pk)
+#         serializer = ProductSerializer(product)
+#         return Response(serializer.data)
 
 class CategoryList(ListAPIView):
     """List of categories"""
@@ -49,7 +59,10 @@ class ProductListByCategory(APIView):
     """List of products by category"""
 
     def get(self, request, slug):
-        products = Product.objects.filter(category__slug=slug)
+        products = Product.objects.filter(
+            category__slug=slug
+        ).prefetch_related('images').select_related('category')
+
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -109,7 +122,7 @@ class RatingView(mixins.CreateModelMixin,
             product_id=self.kwargs.get('pk'),
             user=self.request.user
         )
-    
+
 
 class LikeView(APIView):
 
@@ -126,3 +139,18 @@ class LikeView(APIView):
             Like.objects.create(user=user, product=product)
         
         return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def search(request):
+    query = request.GET.get('q')
+    
+    if query:   
+        products = Product.objects.filter(
+            Q(name__icontains=query)
+        ).prefetch_related('images').select_related('category')
+        print(products.query)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({'products': []})
