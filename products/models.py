@@ -11,15 +11,9 @@ User = get_user_model()
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="Название")
-    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
     
     class Meta:
         verbose_name = "Категория"
@@ -28,7 +22,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, verbose_name="Категория")
-    name = models.CharField(max_length=1000, unique=True, verbose_name="Название")
+    name = models.CharField(max_length=100, unique=True, verbose_name="Название")
     description = models.TextField(blank=True, verbose_name="Описание")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
     amount = models.IntegerField(default=0, verbose_name="В наличии")

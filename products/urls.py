@@ -12,5 +12,5 @@ urlpatterns = [
     path('products/<int:pk>/rating/', views.RatingView.as_view()),
     path('products/<int:pk>/like/', views.LikeView.as_view()),
     path('categories/', views.CategoryList.as_view()),
-    path('categories/<slug:slug>/', views.ProductListByCategory.as_view()),
+    path('categories/<int:pk>/', views.ProductListByCategory.as_view()),
 ]

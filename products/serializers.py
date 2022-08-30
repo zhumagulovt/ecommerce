@@ -43,9 +43,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_image(self, obj):
-        # print(obj.images.all()[:1])
         img = obj.images.all()
-        # print(img)
         if img.exists():
             return img[0].image.url
         return None

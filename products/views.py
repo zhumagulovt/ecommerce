@@ -8,6 +8,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework import status, mixins
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Article, Category, Comment, Product, Rating, Like
 from .permissions import IsOwner
@@ -21,6 +22,13 @@ from .serializers import (
     ProductSerializer, 
     ProductDetailSerializer
 )
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 30
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+    # page_query_param = 'p'
 
 
 class LatestProductList(APIView):
@@ -55,16 +63,30 @@ class CategoryList(ListAPIView):
     serializer_class = CategorySerializer
 
 
-class ProductListByCategory(APIView):
-    """List of products by category"""
+# class ProductListByCategory(APIView):
+#     """List of products by category"""
+#     pagination_class = CustomPagination
 
-    def get(self, request, slug):
-        products = Product.objects.filter(
-            category__slug=slug
+#     def get(self, request, slug):
+#         products = Product.objects.filter(
+#             category__slug=slug
+#         ).prefetch_related('images').select_related('category')
+
+#         serializer = ProductSerializer(products, many=True)
+
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProductListByCategory(ListAPIView):
+    pagination_class = CustomPagination
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.filter(
+            category__id=self.kwargs.get('pk')
         ).prefetch_related('images').select_related('category')
 
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return queryset
 
 
 class LatestArticleList(APIView):
