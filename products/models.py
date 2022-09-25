@@ -4,8 +4,6 @@ from django.db import models
 from django.db.models import Avg
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from pytils.translit import slugify
-
 User = get_user_model()
 
 
@@ -70,6 +68,8 @@ class Rating(models.Model):
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     class Meta:
+        verbose_name = 'Рейтинг'
+        verbose_name_plural = 'Рейтинги'
         unique_together = ('user', 'product')
 
 
