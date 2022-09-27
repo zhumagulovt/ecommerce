@@ -1,5 +1,3 @@
-from django.db.models import Avg
-
 from rest_framework import serializers
 
 from .models import (
